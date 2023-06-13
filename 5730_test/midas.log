@@ -1,0 +1,16 @@
+14:18:36.149 2023/06/13 [mhttpd,INFO] Run #18 started
+14:20:01.081 2023/06/13 [rootana,LOG] Program rootana on host localhost started
+14:22:48.606 2023/06/13 [Logger,LOG] File '/home/deeshadivecha/data/5730_test/run00018.mid' CRC32C checksum: 0xe2a495ba, 346896 bytes
+14:22:48.606 2023/06/13 [Logger,LOG] File '/home/deeshadivecha/data/5730_test/run00018.mid.lz4' CRC32C checksum: 0xc258820f, 43272 bytes
+14:22:48.701 2023/06/13 [mhttpd,INFO] Run #18 stopped
+14:26:20.717 2023/06/13 [feDT5730,LOG] Program feDT5730 on host localhost stopped
+14:26:22.052 2023/06/13 [rootana,LOG] Program rootana on host localhost stopped
+16:20:36.954 2023/06/13 [rootana,LOG] Program rootana on host localhost started
+16:20:43.487 2023/06/13 [feDT5730,LOG] Program feDT5730 on host localhost started
+16:20:43.487 2023/06/13 [feDT5730,INFO] successfully opened digitizer
+16:20:43.487 2023/06/13 [feDT5730,INFO] Connected to CAEN Digitizer Model DT5730S
+16:20:57.846 2023/06/13 [mhttpd,INFO] Run #19 started
+16:25:53.233 2023/06/13 [rootana,LOG] Program rootana on host localhost stopped
+16:42:59.384 2023/06/13 [Logger,LOG] File '/home/deeshadivecha/data/5730_test/run00019.mid' CRC32C checksum: 0x8522733e, 2705941709 bytes
+16:42:59.384 2023/06/13 [Logger,LOG] File '/home/deeshadivecha/data/5730_test/run00019.mid.lz4' CRC32C checksum: 0xdb1476c4, 23540480 bytes
+16:42:59.483 2023/06/13 [mhttpd,INFO] Run #19 stopped
