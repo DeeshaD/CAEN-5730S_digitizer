@@ -24,6 +24,7 @@ typedef struct {
   DWORD     sw_trigger; 
   DWORD     post_trigger[4];           // 0x8114@[31.. 0]
   DWORD     dac[8];                 // 0x1n98@[15.. 0]
+  DWORD   post_trigger_percent;
 } DT5743_CONFIG_SETTINGS;
 
 #define DT5743_CONFIG_SETTINGS_STR(_name) const char *_name[] = {\
@@ -31,7 +32,7 @@ typedef struct {
 "group mask = DWORD : 3",\
 "record length = DWORD : 512",\
 "trigger source = DWORD : 0xffffffff",\         
-"software trigger = DWORD : 0",\         
+"software trigger = DWORD : 0",\       
 "post trigger = DWORD[4] : ",\
 "[0] 20",\
 "[1] 20",\
@@ -46,5 +47,6 @@ typedef struct {
 "[5] 0x400",\
 "[6] 0x400",\
 "[7] 0x400",\
+"post_trigger_percent = DWORD : 50",\  
 NULL }
 #endif  //  ODBDT5743_INCLUDE_H
