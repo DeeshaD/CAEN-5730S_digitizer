@@ -281,53 +281,17 @@ INT initialize_for_run(){
   if ((status = db_get_record (hDB, hSet[module], &tsvc[module], &size, 0)) != DB_SUCCESS)
     return status;
   
-  // Set digitizer length; length must be > 64 and length%16 == 0
-  // if(tsvc[module].record_length % 16 == 0 && tsvc[module].record_length > 64 && 
-  //    tsvc[module].record_length <= 1024  ){    
-  //   ret = CAEN_DGTZ_SetRecordLength(handle, tsvc[module].record_length);
-  //   if(ret != 0) printf("Error setting record length: %i %i\n",ret,tsvc[module].record_length);
-  // }else{
-  //   cm_msg(MERROR, "initialize", "Record length of %i is invalid.  Must be %16 == 0 and > 64 and <= 1024",tsvc[module].record_length );
-  // }
   ret = CAEN_DGTZ_SetRecordLength(handle, tsvc[module].record_length);
     if(ret != 0) printf("Error setting record length: %i %i\n",ret,tsvc[module].record_length);
 
 
-  // Set post trigger
-  int percent = 50; // hardcoded for now - add to odb later
-  // ret = CAEN_DGTZ_SetSAMPostTriggerSize(handle, 0, tsvc[module].post_trigger[0]);
-  // ret = CAEN_DGTZ_SetSAMPostTriggerSize(handle, 1, tsvc[module].post_trigger[1]);
-  // ret = CAEN_DGTZ_SetSAMPostTriggerSize(handle, 2, tsvc[module].post_trigger[2]);
-  // ret = CAEN_DGTZ_SetSAMPostTriggerSize(handle, 3, tsvc[module].post_trigger[3]);
-  // if(ret != 0) printf("Error setting post trigger: %i, %i %i %i \n",handle, ret,tsvc[module].post_trigger[0],tsvc[module].post_trigger[1]);
-  ret = CAEN_DGTZ_SetPostTriggerSize(handle,percent);
-  if(ret != 0) printf("Error setting post trigger: %i, %i, %i \n",handle, ret, percent);
+  ret = CAEN_DGTZ_SetPostTriggerSize(handle, (uint32_t)tsvc[module].post_trigger_percent);
+  if(ret != 0) printf("Error setting post trigger: %i, %i, %i \n",handle, ret, tsvc[module].post_trigger_percent);
 
-  // Set Sampling frequency - Fixed sampling frequency
-  // ret = CAEN_DGTZ_SetSAMSamplingFrequency(handle, tsvc[module].frequency);
-  // if(ret != 0) printf("Error setting frequency: %i\n",ret);
   
-  // // Other SAMLONG digitizatoin parameters
-
-  // ret = CAEN_DGTZ_SetSAMCorrectionLevel(handle, CAEN_DGTZ_SAM_CORRECTION_ALL);
-  // //ret = CAEN_DGTZ_SetSAMCorrectionLevel(handle, CAEN_DGTZ_SAM_CORRECTION_DISABLED);
-  // if(ret != 0) printf("Error setting CorLevel: %i\n",ret); 
-
-  // ret = CAEN_DGTZ_LoadSAMCorrectionData(handle);
-  // if(ret != 0) printf("Error setting Correction Data: %i\n",ret);
-
-  // ret = CAEN_DGTZ_DisableSAMPulseGen(handle,0);
-  // if(ret != 0) printf("Error setting PulseGen: %i\n",ret);
-
-  // ret = CAEN_DGTZ_SetSAMAcquisitionMode(handle, CAEN_DGTZ_AcquisitionMode_STANDARD);
-  // if(ret != 0) printf("Error setting Acq Mode: %i\n",ret);
-
-  // ret = CAEN_DGTZ_SetAcquisitionMode(handle, CAEN_DGTZ_SW_CONTROLLED);
-  // if(ret != 0) printf("Error setting Acq Mode: %i\n",ret);
   // ret = CAEN_DGTZ_SetExtTriggerInputMode(handle, CAEN_DGTZ_TRGMODE_ACQ_ONLY);
   // if(ret != 0) printf("Error setting Trig inp Mode: %i\n",ret);
   
-
   
   // Set the DC offset
   for(int i = 0; i < 8; i++){
@@ -336,10 +300,12 @@ INT initialize_for_run(){
   
   }
 
-  // // Set Group enable
+  // // Set Group enable // can only be used for 743 
   // ret = CAEN_DGTZ_SetGroupEnableMask(handle, tsvc[module].group_mask);
   //   if(ret != 0) printf("Error setting group enable: %i\n",ret);
-  
+
+  ret = CAEN_DGTZ_SetChannelEnableMask(handle, 0x1);  
+  if(ret != 0) printf("Error setting channel enable: %i\n",ret);
 
   sleep(3);
   
@@ -350,8 +316,6 @@ INT initialize_for_run(){
   ret |= CAEN_DGTZ_GetRecordLength(handle,&dcoffset);
   printf("record length: %x\n",dcoffset);
   
-  // ret |= CAEN_DGTZ_GetSAMSamplingFrequency(handle,&dcoffset);
-  // printf("sampling frequency: %x\n",dcoffset);
 
   ret |= CAEN_DGTZ_GetChannelDCOffset(handle,0,&dcoffset);
   printf("Channel0 DC offset: %x\n",dcoffset);
@@ -367,9 +331,14 @@ INT initialize_for_run(){
   // enable the external trigger
   ret |= CAEN_DGTZ_SetAcquisitionMode(handle, CAEN_DGTZ_SW_CONTROLLED);
   if(ret != 0) printf("Error setting Acq Mode: %i\n",ret);
-  ret |= CAEN_DGTZ_SetExtTriggerInputMode(handle, CAEN_DGTZ_TRGMODE_ACQ_AND_EXTOUT);
+  ret |= CAEN_DGTZ_SetExtTriggerInputMode(handle, CAEN_DGTZ_TRGMODE_ACQ_ONLY);
   if(ret != 0) printf("Error setting Trig inp Mode: %i\n",ret);
   //ret |= CAEN_DGTZ_SetExtTriggerInputMode(handle, CAEN_DGTZ_TRGMODE_DISABLED);
+  
+  uint32_t Data;
+  CAEN_DGTZ_ReadRegister(handle,0x810c,&Data);
+	printf("Global trigger mask value = %i\n",Data); 
+
   printf("acq mode set \n");
 
   //Enable the trigger on channel
@@ -494,9 +463,12 @@ int Nloop, Ncount;
     // Read the correct register to check number of events stored on digitizer.
     uint32_t Data;
     int ret;
-    ret = CAEN_DGTZ_ReadRegister(handle,0x812c,&Data);
+    ret = CAEN_DGTZ_ReadRegister(handle,0xEF04,&Data); // redout status register : 0th bit =1 : event ready
+    // printf("Read Register value %i \n", Data);
+    if(Data%2 == 1) lam = 1;
+    // ret = CAEN_DGTZ_ReadRegister(handle,0x812c,&Data);
     // printf("Read Register value %i \n", ret);
-    if(Data > 0) lam = 1;
+    // if(Data > 0) lam = 1;
     
     ss_sleep(1);
     if (lam) {
@@ -530,22 +502,35 @@ int vf48_error = 0;
 #include <stdint.h>
 INT read_trigger_event(char *pevent, INT off)
 {
+  // printf("entered read trig\n");
+
    // Get number of events in buffer
    uint32_t buffsize;
    uint32_t numEvents;    
 	
+  uint32_t Data; // added from 5724
+	
+	CAEN_DGTZ_ReadRegister(handle,0x812c,&Data);
+	// printf("Number of events stored before = %i\n",Data); 
+  
+  // end added
+
 
    int ret2 =  CAEN_DGTZ_ReadData(handle, CAEN_DGTZ_SLAVE_TERMINATED_READOUT_MBLT, gBuffer, &buffsize);
   //  std::cout << buffsize << '\n';
-   for(int i; i<buffsize; i++){
-    // std::cout << "gbuffer: " << gBuffer[i] << '\n';
-   }
+  //  for(int i; i<buffsize; i++){
+  //    std::cout << "gbuffer: " << gBuffer[i] << '\n';
+  //  }
 	//int ret2 =  CAEN_DGTZ_ReadData(handle, CAEN_DGTZ_SLAVE_TERMINATED_READOUT_2eVME, gBuffer, &buffsize);
    if(ret2){
       printf("Failed to read data,\n");
    }
 
+   CAEN_DGTZ_ReadRegister(handle,0x812c,&Data); // 5724
+	//  printf("Number of events stored after = %i\n",Data); // 5724
+
    uint32_t * words = (uint32_t*)gBuffer;
+  //  printf("0x%x 0x%x 0x%x 0x%x\n",words[0],words[1],words[2],words[3]);
 
    gettimeofday(&te,NULL);
    long long etime = (long long)(te.tv_sec)*1000+(int)te.tv_usec/1000;
@@ -563,7 +548,7 @@ INT read_trigger_event(char *pevent, INT off)
    // Create event header
    bk_init32(pevent);
 
-   bk_create(pevent, BankName[0], TID_DWORD, (void**)&pddata);//cast to void (arturo 25/11/15)
+   bk_create(pevent, BankName[0], TID_DWORD, (void**)&pddata);// cast to void (arturo 25/11/15) 
 
    //Add the time to the beginning
    *pddata++ = etime1;
@@ -574,15 +559,17 @@ INT read_trigger_event(char *pevent, INT off)
    int buffsize_32 = buffsize/4; // Calculate number of 32-bit words
    for(i = 0; i < buffsize_32; i++){
      *pddata++ = words[i];
-     //printf("  data[%i] = 0x%x\n",i,words[i]);
+    //  printf("  data[%i] = 0x%x\n",i,words[i]);
    }
 
    bk_close(pevent, pddata);	
 
-   //primitive progress bar
-   //if (sn % 100 == 0) printf(".%d",bk_size(pevent));
+//    primitive progress bar
+//    if (sn % 100 == 0) printf(".%d\n",bk_size(pevent));
 
    return bk_size(pevent);
+
+    
 
 }
  
