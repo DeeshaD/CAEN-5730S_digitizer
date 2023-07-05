@@ -39,14 +39,14 @@ typedef struct {
 "[2] 20",\
 "[3] 20",\
 "dac = DWORD[8] : ",\
-"[0] 0x400",\
-"[1] 0x400",\
-"[2] 0x400",\
-"[3] 0x400",\
-"[4] 0x400",\
-"[5] 0x400",\
-"[6] 0x400",\
-"[7] 0x400",\
+"[0] 0x7fff",\
+"[1] 0x7fff",\
+"[2] 0x7fff",\
+"[3] 0x7fff",\
+"[4] 0x7fff",\
+"[5] 0x7fff",\
+"[6] 0x7fff",\
+"[7] 0x7fff",\
 "post_trigger_percent = DWORD : 50",\  
 NULL }
 #endif  //  ODBDT5743_INCLUDE_H
