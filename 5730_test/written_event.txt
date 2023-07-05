@@ -1,0 +1,121 @@
+
+
+
+Event words
+word: 0x3fff3fff
+00111111111111110011111111111111
+
+
+
+1.
+Header: 
+First word: 0xa0000414
+10100000000000000000010000010100
+
+Second word: 0xf800000f
+11111000 0000000000000000 00001111
+
+Third Word: 0x114f
+0001000101001111
+
+Fourth word: 0x6d8986a1
+01101101100010011000011010100001
+
+
+2.
+Header: 
+First word: 0xa0000414
+10100000000000000000010000010100
+
+Second word: 0xf800000f
+11111000000000000000000000001111
+
+Third Word: 0x1150
+0001000101010000
+
+Fourth word: 0x6d8fbcc7
+01101101100011111011110011000111
+
+
+One of the events as seen in the terminal: 
+entered read trig
+Number of events stored before = 906
+Number of events stored after = 905
+0xa0000414 0xf800000f 0x114e 0x6d83115d
+  data[0] = 0xa0000414
+  data[1] = 0xf800000f
+  data[2] = 0x114e
+  data[3] = 0x6d83115d
+  data[4] = 0x3fff3fff
+  data[5] = 0x3fff3fff
+  data[6] = 0x3fff3fff
+  data[7] = 0x3fff3fff
+  data[8] = 0x3fff3fff
+  data[9] = 0x3fff3fff
+  data[10] = 0x3fff3fff
+
+
+
+
+  data[0] = 0xa0000414
+  data[1] = 0xf800000f
+  data[2] = 0x409
+  data[3] = 0x48c5bb
+  data[4] = 0x3fff3fff
+  data[5] = 0x3fff3fff
+  data[6] = 0x3fff3fff
+  data[7] = 0x3fff3fff
+  data[8] = 0x3fff3fff
+  
+Bank:30FS Length: 4184(I*1)/1046(I*4)/1046(Type) Type:Unsigned Integer*4
+   1-> 0x00000189 0x0333b579 0xa0000414 0xf800000f 0x00000d13 0x19b8c3ff 0x3fff3fff 0x3fff3fff 
+   9-> 0x3fff3fff 0x3fff3fff 0x3fff3fff 0x3fff3fff 0x3fff3fff 0x3fff3fff 0x3fff3fff 0x3fff3fff 
+
+
+
+Global trigger mask register(0x810C) value:
+
+-1073741824
+1100 0000 0000 0000 0000 0000 0000 0000
+
+
+
+
+
+
+after enabling channel 0:
+	1-> 0x00000189 0x038e8fed 0xa0000108 0xf8000001 0x000018f4 0x389086b9 0x3fff3fff 0x3fff3fff 
+    9-> 0x3fff3fff 0x3fff3fff 0x3fff3fff 0x3fff3fff 0x3fff3fff 0x3fff3fff 0x3fff3fff 0x3fff3fff 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
